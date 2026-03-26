@@ -1,0 +1,20 @@
+{
+  "name": "معلم العربية",
+  "short_name": "عربيتي",
+  "description": "لوحة إدارة صف اللغة العربية — جيل ألفا",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#080C14",
+  "theme_color": "#080C14",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%23080C14'/><text y='130' x='96' text-anchor='middle' font-size='110' font-family='serif'>📖</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "ar",
+  "dir": "rtl"
+}

@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="عربيتي">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080C14">
+<title>عربيتي — لوحة معلم اللغة العربية</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TOKENS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+:root {
+  --bg:       #080C14;
+  --surface:  #0E1420;
+  --raised:   #141B28;
+  --high:     #1C2537;
+  --border:   rgba(255,255,255,0.06);
+  --border2:  rgba(255,255,255,0.1);
+
+  --ink:      #EEF2FA;
+  --ink2:     #8A9BBE;
+  --ink3:     #4A5878;
+
+  --gold:     #E8B84B;
+  --gold-dim: rgba(232,184,75,0.12);
+  --gold-glow:rgba(232,184,75,0.25);
+
+  --teal:     #2DD4C0;
+  --teal-dim: rgba(45,212,192,0.10);
+
+  --violet:   #8B5CF6;
+  --violet-dim:rgba(139,92,246,0.12);
+
+  --rose:     #F43F5E;
+  --green:    #22C55E;
+  --amber:    #F59E0B;
+
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 24px;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+  --nav-h:    64px;
+  --header-h: 58px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'IBM Plex Sans Arabic', 'Tajawal', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, select, textarea { font-family: inherit; outline: none; }
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   APP SHELL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--bg);
+  box-shadow: 0 0 80px rgba(0,0,0,0.8);
+}
+
+/* ━━━ TOP STATUS BAR ━━━ */
+#statusBar {
+  height: calc(var(--safe-top) + 2px);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+/* ━━━ APP HEADER ━━━ */
+#appHeader {
+  height: var(--header-h);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.header-logo {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--gold), #C99A2E);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 12px var(--gold-glow);
+  flex-shrink: 0;
+}
+.header-titles { flex: 1; min-width: 0; }
+.header-titles h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.header-titles p  { font-size: 11px; color: var(--ink2); font-weight: 400; }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.clock-pill {
+  background: var(--raised);
+  border: 1px solid var(--border2);
+  border-radius: 99px;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--teal);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.grade-switch {
+  display: flex;
+  background: var(--raised);
+  border-radius: 99px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  gap: 1px;
+}
+.gs-btn {
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink3);
+  transition: all 0.18s;
+}
+.gs-btn.on {
+  background: var(--gold);
+  color: #080C14;
+}
+
+/* ━━━ SCROLLABLE CONTENT ━━━ */
+#content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--nav-h) + var(--safe-bot) + 12px);
+}
+
+/* ━━━ BOTTOM NAV ━━━ */
+#bottomNav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: calc(var(--nav-h) + var(--safe-bot));
+  padding-bottom: var(--safe-bot);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 8px;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 2px;
+  color: var(--ink3);
+  transition: color 0.18s;
+  position: relative;
+}
+.nav-item.on { color: var(--gold); }
+.nav-icon {
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1);
+}
+.nav-item.on .nav-icon { transform: scale(1.15) translateY(-1px); }
+.nav-label { font-size: 9.5px; font-weight: 600; letter-spacing: 0.02em; }
+.nav-dot {
+  position: absolute;
+  top: 2px; left: 50%;
+  transform: translateX(4px);
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--rose);
+  display: none;
+}
+.nav-dot.show { display: block; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCREENS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.screen { display: none; padding: 12px; }
+.screen.on { display: block; animation: slideUp .22s cubic-bezier(.4,0,.2,1); }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PRIMITIVES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.card-sm { padding: 11px 13px; border-radius: var(--r-md); }
+.card + .section-label { margin-top: 14px; }
+
+/* Section labels */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 2px;
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Row layout */
+.row { display: flex; gap: 10px; margin-bottom: 10px; }
+.row > * { flex: 1; min-width: 0; }
+
+/* Chip row */
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.chip {
+  padding: 5px 11px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid var(--border2);
+  color: var(--ink2);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip.on { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+/* Buttons */
+.btn {
+  padding: 11px 16px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  letter-spacing: -0.01em;
+}
+.btn:active { transform: scale(0.97); }
+.btn-gold   { background: var(--gold); color: #080C14; }
+.btn-ghost  { background: var(--raised); color: var(--ink2); border: 1px solid var(--border); }
+.btn-teal   { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(45,212,192,0.2); }
+.btn-violet { background: var(--violet-dim); color: var(--violet); border: 1px solid rgba(139,92,246,0.2); }
+.btn-danger { background: rgba(244,63,94,0.12); color: var(--rose); border: 1px solid rgba(244,63,94,0.2); }
+.btn-green  { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 7px 12px; font-size: 12px; border-radius: var(--r-xs); }
+
+/* Inputs */
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--raised);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  font-size: 13px;
+  transition: border-color 0.18s;
+}
+.input:focus { border-color: var(--gold); }
+.input::placeholder { color: var(--ink3); }
+select.input { cursor: pointer; }
+
+/* Progress bar */
+.pbar-wrap { margin-bottom: 8px; }
+.pbar-head { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+.pbar-name { font-weight: 600; color: var(--ink); }
+.pbar-val  { font-weight: 700; color: var(--gold); }
+.pbar-track { height: 6px; background: var(--raised); border-radius: 99px; overflow: hidden; }
+.pbar-fill  {
+  height: 100%; border-radius: 99px;
+  transition: width 0.8s cubic-bezier(.4,0,.2,1);
+  position: relative; overflow: hidden;
+}
+.pbar-fill::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
+  animation: shim 2s infinite;
+}
+@keyframes shim { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+.pb-nahw   { background: linear-gradient(90deg,#7C3AED,#5B21B6); }
+.pb-qiraa  { background: linear-gradient(90deg,#0891B2,#0E7490); }
+.pb-nusus  { background: linear-gradient(90deg,#059669,#047857); }
+.pb-tabeer { background: linear-gradient(90deg,#D97706,#B45309); }
+.pb-imla   { background: linear-gradient(90deg,#BE185D,#9D174D); }
+.pb-khat   { background: linear-gradient(90deg,#2563EB,#1D4ED8); }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+/* Badge */
+.badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 7px; border-radius: 99px;
+  font-size: 10px; font-weight: 700;
+}
+.badge-gold   { background: var(--gold-dim);   color: var(--gold); }
+.badge-teal   { background: var(--teal-dim);   color: var(--teal); }
+.badge-violet { background: var(--violet-dim); color: var(--violet); }
+.badge-rose   { background: rgba(244,63,94,0.12); color: var(--rose); }
+.badge-green  { background: rgba(34,197,94,0.12); color: var(--green); }
+
+/* XP pill */
+.xp-pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px; border-radius: 99px;
+  background: var(--gold-dim); color: var(--gold);
+  font-size: 12px; font-weight: 700;
+}
+
+/* Stat card */
+.stat-box {
+  background: var(--raised);
+  border-radius: var(--r-md);
+  padding: 12px 10px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.stat-box .val { font-size: 26px; font-weight: 800; line-height: 1; }
+.stat-box .lbl { font-size: 10px; color: var(--ink2); margin-top: 3px; font-weight: 500; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCREEN 1 — HOME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.welcome-strip {
+  background: linear-gradient(135deg, var(--raised) 0%, #1A2235 100%);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl);
+  padding: 16px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.welcome-strip::before {
+  content: '📖';
+  position: absolute;
+  left: -10px; top: -10px;
+  font-size: 80px;
+  opacity: 0.06;
+  line-height: 1;
+  pointer-events: none;
+}
+.welcome-strip h2 { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+.welcome-strip p  { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+
+/* Quick action grid */
+.qa-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.qa-item {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 11px 6px 9px;
+  text-align: center;
+  transition: all 0.18s;
+}
+.qa-item:active { transform: scale(0.94); background: var(--high); }
+.qa-icon  { font-size: 22px; display: block; margin-bottom: 5px; line-height: 1; }
+.qa-label { font-size: 10px; color: var(--ink2); font-weight: 600; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCREEN 2 — PERIOD TIMER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.timer-ring-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0 14px;
+  position: relative;
+}
+.ring-container { position: relative; width: 180px; height: 180px; }
+.ring-container svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.ring-bg   { fill: none; stroke: var(--raised); }
+.ring-prog { fill: none; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+.ring-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.ring-time { font-size: 38px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.ring-phase { font-size: 11px; color: var(--ink2); font-weight: 600; margin-top: 2px; }
+.ring-period-label { font-size: 10px; color: var(--ink3); margin-top: 1px; }
+
+/* Duration buttons */
+.dur-row { display: flex; gap: 6px; margin-bottom: 12px; }
+.dur-btn {
+  flex: 1; padding: 8px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 700;
+  background: var(--raised); color: var(--ink2);
+  border: 1.5px solid var(--border);
+  transition: all 0.15s;
+}
+.dur-btn.on { background: var(--gold-dim); color: var(--gold); border-color: rgba(232,184,75,0.35); }
+
+/* Timer controls */
+.t-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+
+/* Phase bar */
+.phase-row {
+  display: flex; gap: 6px; margin-bottom: 12px;
+}
+.phase-item {
+  flex: 1; padding: 8px 6px;
+  background: var(--raised); border-radius: var(--r-sm);
+  border: 1.5px solid var(--border);
+  text-align: center; font-size: 11px; cursor: pointer;
+  transition: all 0.18s;
+}
+.phase-item.active { border-color: var(--teal); background: var(--teal-dim); color: var(--teal); }
+.phase-item .ph-icon { font-size: 16px; display: block; margin-bottom: 3px; }
+.phase-item .ph-name { font-size: 10px; font-weight: 700; }
+.phase-item .ph-time { font-size: 9px; color: var(--ink3); }
+
+/* Cross-subject optional panel */
+.cross-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color 0.18s;
+}
+.cross-toggle:hover { border-color: var(--border2); }
+.cross-toggle-label { font-size: 12px; font-weight: 600; color: var(--ink2); display: flex; align-items: center; gap: 6px; }
+.toggle-switch {
+  width: 36px; height: 20px;
+  background: var(--high); border-radius: 99px;
+  position: relative; transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  border-radius: 50%; background: white;
+  top: 3px; right: 3px;
+  transition: all 0.2s;
+}
+.toggle-switch.on { background: var(--gold); }
+.toggle-switch.on::after { right: auto; left: 3px; }
+
+#crossPanel {
+  display: none;
+  background: var(--raised);
+  border-radius: var(--r-sm);
+  padding: 10px;
+  margin-bottom: 6px;
+  border: 1px solid rgba(232,184,75,0.2);
+}
+#crossPanel.open { display: block; animation: slideUp 0.2s ease; }
+.cross-context-note {
+  font-size: 11px; color: var(--amber);
+  margin-bottom: 8px; line-height: 1.5;
+  padding: 6px 8px; background: rgba(245,158,11,0.08);
+  border-radius: var(--r-xs);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCREEN 3 — STUDENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.search-bar {
+  display: flex; gap: 8px; margin-bottom: 10px;
+}
+.student-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.student-item:active { background: var(--raised); transform: scale(0.98); }
+.student-item.sel { border-color: rgba(232,184,75,0.4); background: var(--gold-dim); }
+.s-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; color: #080C14;
+  flex-shrink: 0;
+}
+.s-name  { font-size: 13px; font-weight: 700; flex: 1; }
+.s-meta  { font-size: 10px; color: var(--ink2); }
+.s-xp    { font-size: 12px; font-weight: 700; color: var(--gold); white-space: nowrap; }
+.level-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-left: 4px; }
+
+/* Student detail panel */
+.detail-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.detail-avatar-wrap { display: flex; justify-content: center; margin-bottom: 12px; }
+.detail-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 900; color: #080C14;
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 4px var(--border2);
+}
+.detail-name { text-align: center; font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.detail-badges { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCREEN 4 — ORAL EXAM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.rubric-item {
+  background: var(--raised);
+  border-radius: var(--r-md);
+  padding: 11px 12px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+}
+.rubric-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+.star-row { display: flex; gap: 5px; align-items: center; }
+.star-btn {
+  width: 36px; height: 36px;
+  border-radius: var(--r-xs);
+  background: var(--high);
+  color: var(--ink3);
+  font-size: 13px; font-weight: 700;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.star-btn.on { background: var(--gold); color: #080C14; box-shadow: 0 0 12px var(--gold-glow); }
+.star-btn:active { transform: scale(0.88); }
+.rubric-score { margin-right: auto; font-size: 18px; font-weight: 800; color: var(--gold); }
+
+.oral-total-bar {
+  background: var(--raised);
+  border-radius: var(--r-md);
+  padding: 14px;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.oral-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.oral-total-label { font-size: 13px; font-weight: 700; }
+.oral-total-val   { font-size: 28px; font-weight: 900; color: var(--gold); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCREEN 5 — REWARDS & LEADERBOARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.reward-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 10px; }
+.r-btn {
+  background: var(--raised);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 6px;
+  text-align: center;
+  transition: all 0.18s;
+}
+.r-btn:active { transform: scale(0.92); }
+.r-icon  { font-size: 24px; display: block; margin-bottom: 4px; }
+.r-label { font-size: 10px; color: var(--ink2); display: block; margin-bottom: 2px; }
+.r-xp    { font-size: 12px; font-weight: 800; color: var(--gold); }
+.r-btn.neg .r-xp { color: var(--rose); }
+
+/* Leaderboard */
+.lb-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  margin-bottom: 4px;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.lb-item:active { background: var(--raised); }
+.lb-rank { font-size: 18px; width: 28px; text-align: center; font-weight: 800; flex-shrink: 0; }
+.lb-ava  {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #080C14; flex-shrink: 0;
+}
+.lb-info { flex: 1; min-width: 0; }
+.lb-name { font-size: 13px; font-weight: 700; }
+.lb-sub  { font-size: 10px; color: var(--ink2); }
+.lb-xp   { font-size: 14px; font-weight: 800; color: var(--gold); }
+
+/* Weekly announce card */
+.announce-card {
+  background: linear-gradient(135deg, #1C2030, #141826);
+  border: 1px solid rgba(232,184,75,0.25);
+  border-radius: var(--r-xl);
+  padding: 16px;
+  margin-bottom: 10px;
+  position: relative; overflow: hidden;
+}
+.announce-card::after {
+  content: '🏆';
+  position: absolute; left: -8px; top: -8px;
+  font-size: 72px; opacity: 0.07;
+  line-height: 1; pointer-events: none;
+}
+.announce-title { font-size: 15px; font-weight: 800; color: var(--gold); margin-bottom: 2px; }
+.announce-week  { font-size: 10px; color: var(--ink2); margin-bottom: 12px; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCREEN 6 — AI & REPORTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.ai-screen { display: flex; flex-direction: column; height: 100%; }
+.ai-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 80px;
+}
+.msg-ai, .msg-user {
+  max-width: 88%;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  font-size: 13px; line-height: 1.65;
+}
+.msg-ai {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  align-self: flex-start;
+  border-bottom-right-radius: 4px;
+}
+.msg-user {
+  background: var(--violet-dim);
+  border: 1px solid rgba(139,92,246,0.2);
+  align-self: flex-end;
+  border-bottom-left-radius: 4px;
+  color: var(--ink);
+}
+.ai-typing { display: flex; gap: 4px; padding: 10px 12px; align-items: center; }
+.typing-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--ink3);
+  animation: blink 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:.3} 40%{opacity:1} }
+
+.ai-input-bar {
+  position: fixed;
+  bottom: calc(var(--nav-h) + var(--safe-bot));
+  left: 0; right: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 8px 12px;
+  display: flex; gap: 8px;
+  z-index: 50;
+}
+.ai-input {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--raised);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  font-size: 13px;
+  transition: border-color 0.18s;
+}
+.ai-input:focus { border-color: var(--violet); }
+.quick-prompts {
+  display: flex; gap: 6px; overflow-x: auto;
+  padding: 0 12px 10px;
+}
+.qp-btn {
+  flex-shrink: 0;
+  padding: 6px 11px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  font-size: 11px; color: var(--ink2);
+  white-space: nowrap; font-weight: 600;
+  transition: all 0.15s;
+}
+.qp-btn:active { background: var(--violet-dim); color: var(--violet); border-color: rgba(139,92,246,0.3); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TOAST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#toasts {
+  position: fixed;
+  top: calc(var(--safe-top) + var(--header-h) + 8px);
+  left: 50%; transform: translateX(-50%);
+  z-index: 9999;
+  display: flex; flex-direction: column; gap: 6px;
+  pointer-events: none;
+  max-width: 340px; width: 90%;
+}
+.toast {
+  padding: 10px 16px;
+  border-radius: var(--r-md);
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  animation: toastIn .28s cubic-bezier(.2,1.5,.4,1) forwards;
+  white-space: nowrap;
+}
+@keyframes toastIn  { from{opacity:0;transform:translateY(-12px) scale(.9)} to{opacity:1;transform:none} }
+@keyframes toastOut { from{opacity:1;transform:none} to{opacity:0;transform:translateY(-8px) scale(.95)} }
+.toast-xp      { background: #1C2010; border: 1px solid rgba(232,184,75,.3); color: var(--gold); }
+.toast-success { background: #0E1F17; border: 1px solid rgba(34,197,94,.3);  color: var(--green); }
+.toast-info    { background: var(--raised); border: 1px solid var(--border2); color: var(--ink); }
+.toast-warn    { background: #1F1710; border: 1px solid rgba(245,158,11,.3); color: var(--amber); }
+.toast-error   { background: #1F0E12; border: 1px solid rgba(244,63,94,.3);  color: var(--rose); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CONFETTI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.cpiece {
+  position: fixed; width: 7px; height: 7px; border-radius: 2px;
+  z-index: 9998; pointer-events: none;
+  animation: cfFall var(--dur, 1s) ease-in var(--delay, 0s) forwards;
+}
+@keyframes cfFall {
+  0%   { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(95vh) rotate(600deg) scale(.4); opacity: 0; }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SHEET (bottom drawer)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.sheet-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.6);
+  z-index: 200; display: none; backdrop-filter: blur(4px);
+}
+.sheet-overlay.open { display: flex; align-items: flex-end; justify-content: center; }
+.sheet {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  padding: 16px 16px calc(16px + var(--safe-bot));
+  width: 100%; max-width: 480px;
+  max-height: 90dvh; overflow-y: auto;
+  animation: sheetUp .28s cubic-bezier(.4,0,.2,1);
+}
+@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.sheet-handle {
+  width: 36px; height: 4px; border-radius: 99px;
+  background: var(--border2); margin: 0 auto 14px;
+}
+.sheet-title { font-size: 16px; font-weight: 800; margin-bottom: 14px; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   OUTPUT BOX
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.output-box {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--ink2);
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 60px;
+}
+
+/* PWA install banner */
+#installBanner {
+  background: linear-gradient(135deg, var(--raised), var(--high));
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+#installBanner .ib-text { flex: 1; font-size: 12px; color: var(--ink2); }
+#installBanner .ib-text strong { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+#ib-close { font-size: 18px; color: var(--ink3); padding: 4px; }
+
+/* Subjects in home quick access */
+.subj-strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.subj-pill {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 12px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 12px; font-weight: 700;
+  transition: all 0.18s;
+}
+.subj-pill:active { transform: scale(0.95); }
+
+/* Curve canvas */
+.curve-box { position: relative; height: 120px; margin: 6px 0; }
+.curve-box canvas { width: 100%; height: 100%; display: block; }
+
+/* Floating add button */
+.fab {
+  position: fixed;
+  bottom: calc(var(--nav-h) + var(--safe-bot) + 14px);
+  left: 16px;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #080C14;
+  font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px var(--gold-glow);
+  z-index: 90;
+  transition: all 0.2s;
+}
+.fab:active { transform: scale(0.9); }
+
+/* Offline bar */
+#offlineBar {
+  display: none; position: fixed; top: calc(var(--safe-top) + var(--header-h));
+  left: 0; right: 0; z-index: 500;
+  background: var(--rose); color: white;
+  text-align: center; font-size: 11px; font-weight: 700;
+  padding: 4px;
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="statusBar"></div>
+
+  <!-- HEADER -->
+  <div id="appHeader">
+    <div class="header-logo">📖</div>
+    <div class="header-titles">
+      <h1>عربيتي</h1>
+      <p id="hdrSub">الصف السابع · اللغة العربية</p>
+    </div>
+    <div class="header-right">
+      <div class="clock-pill" id="clockEl">--:--</div>
+      <div class="grade-switch">
+        <button class="gs-btn on" onclick="setGrade(7,this)">7</button>
+        <button class="gs-btn"   onclick="setGrade(8,this)">8</button>
+        <button class="gs-btn"   onclick="setGrade(9,this)">9</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div id="content">
+
+    <!-- ═══ SCREEN: HOME ═══ -->
+    <div id="s-home" class="screen on">
+
+      <div id="installBanner">
+        <span style="font-size:24px">📲</span>
+        <div class="ib-text">
+          <strong>نصّب التطبيق</strong>
+          أضفه للشاشة الرئيسية للعمل بدون إنترنت
+        </div>
+        <button id="installBtn" class="btn btn-gold btn-sm">تنصيب</button>
+        <button id="ib-close" onclick="document.getElementById('installBanner').remove()">✕</button>
+      </div>
+
+      <div class="welcome-strip">
+        <h2 id="welcomeText">صباح التميز 🌤️</h2>
+        <p id="welcomeSub">الصف السابع · <span id="wDateEl"></span></p>
+      </div>
+
+      <!-- Stats row -->
+      <div class="row">
+        <div class="stat-box">
+          <div class="val" id="statStudents" style="color:var(--teal)">—</div>
+          <div class="lbl">طالب</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" id="statAvgXP" style="color:var(--gold)">—</div>
+          <div class="lbl">متوسط XP</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" id="statCoverage" style="color:var(--violet)">62%</div>
+          <div class="lbl">المنهج</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" id="statWeek" style="color:var(--rose)">—</div>
+          <div class="lbl">أسبوع</div>
+        </div>
+      </div>
+
+      <div class="section-label">الأقسام الستة</div>
+      <div class="subj-strip" id="subjStrip"></div>
+
+      <div class="section-label" style="margin-top:14px">تقدم الأقسام</div>
+      <div class="card" id="progressCard"></div>
+
+      <div class="section-label">إجراءات سريعة</div>
+      <div class="qa-grid">
+        <button class="qa-item" onclick="go('s-timer')">
+          <span class="qa-icon">⏱️</span><span class="qa-label">الحصة</span>
+        </button>
+        <button class="qa-item" onclick="openRewardSheet()">
+          <span class="qa-icon">🎁</span><span class="qa-label">مكافأة</span>
+        </button>
+        <button class="qa-item" onclick="pickRandom()">
+          <span class="qa-icon">🎲</span><span class="qa-label">عشوائي</span>
+        </button>
+        <button class="qa-item" onclick="go('s-oral')">
+          <span class="qa-icon">🎤</span><span class="qa-label">الشفوي</span>
+        </button>
+        <button class="qa-item" onclick="go('s-rewards')">
+          <span class="qa-icon">🏆</span><span class="qa-label">الترتيب</span>
+        </button>
+        <button class="qa-item" onclick="go('s-ai')">
+          <span class="qa-icon">🤖</span><span class="qa-label">مساعد AI</span>
+        </button>
+        <button class="qa-item" onclick="sendWhatsApp()">
+          <span class="qa-icon">💬</span><span class="qa-label">واتساب</span>
+        </button>
+        <button class="qa-item" onclick="openBureauSheet()">
+          <span class="qa-icon">🗂️</span><span class="qa-label">إدارية</span>
+        </button>
+      </div>
+
+      <div class="section-label" style="margin-top:4px">منحنى الفصل</div>
+      <div class="card">
+        <div class="curve-box"><canvas id="curveCanvas"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN: TIMER ═══ -->
+    <div id="s-timer" class="screen">
+      <div class="section-label">مدة الحصة</div>
+      <div class="dur-row">
+        <button class="dur-btn" onclick="setDur(30,this)">30 دقيقة</button>
+        <button class="dur-btn on" onclick="setDur(35,this)">35 دقيقة</button>
+        <button class="dur-btn" onclick="setDur(40,this)">40 دقيقة</button>
+      </div>
+
+      <div class="timer-ring-wrap">
+        <div class="ring-container">
+          <svg viewBox="0 0 200 200" width="200" height="200">
+            <circle class="ring-bg" cx="100" cy="100" r="86" stroke-width="10"/>
+            <circle id="ringP" class="ring-prog" cx="100" cy="100" r="86" stroke-width="10"
+              stroke="var(--teal)" stroke-dasharray="540" stroke-dashoffset="0"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-time" id="timerDisp">35:00</div>
+            <div class="ring-phase" id="phaseLabel">التهيئة</div>
+            <div class="ring-period-label" id="periodLabel">الحصة 1</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase plan -->
+      <div class="section-label">مراحل الحصة</div>
+      <div class="phase-row" id="phaseRow"></div>
+
+      <!-- Timer controls -->
+      <div class="t-controls">
+        <button class="btn btn-teal" id="timerMainBtn" onclick="toggleTimer()">▶ ابدأ</button>
+        <button class="btn btn-ghost" onclick="resetTimer()">↺ إعادة</button>
+        <button class="btn btn-violet" onclick="nextPhase()">⟫ مرحلة</button>
+      </div>
+
+      <!-- Subject of this period -->
+      <div class="section-label">مادة الحصة الحالية</div>
+      <div class="chips" id="periodSubjChips"></div>
+
+      <div class="divider"></div>
+
+      <!-- Cross-subject optional toggle -->
+      <div class="cross-toggle" onclick="toggleCrossPanel()">
+        <span class="cross-toggle-label">🔗 ربط بالمادة التي سبقتك <span style="font-size:10px;background:var(--gold-dim);color:var(--gold);padding:2px 6px;border-radius:99px;font-weight:700">اختياري</span></span>
+        <div class="toggle-switch" id="crossToggle"></div>
+      </div>
+      <div id="crossPanel">
+        <div class="cross-context-note">⚠️ فعّل هذا فقط إذا لاحظت أن المادة السابقة أثّرت في مزاج أو جاهزية طلابك لهذا الدرس</div>
+        <div class="section-label">المادة التي سبقت العربية</div>
+        <div class="chips">
+          <button class="chip" onclick="selectPrev(this,'الرياضيات')">🔢 رياضيات</button>
+          <button class="chip" onclick="selectPrev(this,'العلوم')">🔬 علوم</button>
+          <button class="chip" onclick="selectPrev(this,'القرآن')">📖 قرآن</button>
+          <button class="chip" onclick="selectPrev(this,'الاجتماعيات')">🌍 اجتماعيات</button>
+          <button class="chip" onclick="selectPrev(this,'التربية الإسلامية')">☪️ إسلامية</button>
+          <button class="chip" onclick="selectPrev(this,'اللغة الإنجليزية')">🇬🇧 إنجليزي</button>
+        </div>
+        <div class="section-label">تأثير المادة السابقة</div>
+        <div class="chips">
+          <button class="chip" onclick="selectEffect(this,'تعب ذهني')">😓 تعب ذهني</button>
+          <button class="chip" onclick="selectEffect(this,'نشاط عالٍ')">⚡ نشاط عالٍ</button>
+          <button class="chip" onclick="selectEffect(this,'تشتت')">🌀 تشتت</button>
+          <button class="chip" onclick="selectEffect(this,'تحفز جيد')">✅ تحفز جيد</button>
+        </div>
+        <div id="crossAdvice" style="margin-top:6px"></div>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN: STUDENTS ═══ -->
+    <div id="s-students" class="screen">
+      <div id="studentDetailPanel" style="display:none"></div>
+
+      <div class="search-bar">
+        <input class="input" id="searchIn" placeholder="🔍  ابحث..." oninput="filterStudents()" style="flex:1">
+        <button class="btn btn-gold btn-sm" onclick="openAddSheet()">+ طالب</button>
+      </div>
+
+      <div id="studentList"></div>
+    </div>
+
+    <!-- ═══ SCREEN: ORAL EXAM ═══ -->
+    <div id="s-oral" class="screen">
+      <div class="section-label">بيانات الاختبار</div>
+      <div class="row" style="margin-bottom:10px">
+        <select class="input" id="oralStudentSel"><option value="">اختر الطالب</option></select>
+        <select class="input" id="oralMonthSel">
+          <option value="1">شهر 1</option>
+          <option value="2">شهر 2</option>
+          <option value="3">شهر 3</option>
+          <option value="4">شهر 4</option>
+        </select>
+      </div>
+
+      <div class="section-label">معايير التقييم — <span id="oralGradeLabel"></span></div>
+      <div id="rubricWrap"></div>
+
+      <div class="oral-total-bar">
+        <div class="oral-total-row">
+          <span class="oral-total-label">المجموع</span>
+          <span class="oral-total-val" id="oralTotalDisp">0 / 20</span>
+        </div>
+        <div class="pbar-track">
+          <div class="pbar-fill pb-nahw" id="oralProgBar" style="width:0%;transition:width .4s"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-gold btn-full" onclick="saveOral()">💾 حفظ الدرجة</button>
+        <button class="btn btn-ghost" onclick="resetOral()" style="flex:0;padding:11px 14px">↺</button>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">سجل الشفوي</div>
+      <div id="oralLog"></div>
+    </div>
+
+    <!-- ═══ SCREEN: REWARDS / LEADERBOARD ═══ -->
+    <div id="s-rewards" class="screen">
+      <!-- Weekly announce -->
+      <div class="announce-card" id="announceCard"></div>
+
+      <div class="row">
+        <button class="btn btn-teal btn-full" onclick="sendWhatsApp()">📱 واتساب</button>
+        <button class="btn btn-ghost btn-full" onclick="copyAnnounce()">📋 نسخ</button>
+      </div>
+
+      <div class="section-label">لوحة المتصدرين</div>
+      <div id="lbList"></div>
+    </div>
+
+    <!-- ═══ SCREEN: AI ASSISTANT ═══ -->
+    <div id="s-ai" class="screen" style="padding:0">
+      <div class="quick-prompts" style="padding:12px 12px 8px">
+        <button class="qp-btn" onclick="qp('ولّد نشاطاً تفاعلياً في النحو — 10 دقائق — جيل ألفا')">🎮 نشاط نحو</button>
+        <button class="qp-btn" onclick="qp('أعطني 5 أسئلة شفوية مناسبة للصف ' + G + ' في اللغة العربية')">❓ أسئلة شفوي</button>
+        <button class="qp-btn" onclick="qp('كيف أكتب خطة درس رسمية في الإملاء للصف ' + G)">📄 خطة درس</button>
+        <button class="qp-btn" onclick="qp('طلابي جيل ألفا — كيف أجعل درس النصوص مشوّقاً لهم؟')">✨ تحفيز الصف</button>
+        <button class="qp-btn" onclick="qp('اكتب إعلان متميزي الأسبوع للواتساب بشكل جذاب')">🏆 إعلان واتساب</button>
+        <button class="qp-btn" onclick="qp('كيف أتعامل مع الفجوة المعرفية بين الطلاب في نفس الصف؟')">⚖️ فجوة المستويات</button>
+      </div>
+      <div class="ai-messages" id="aiMsgs">
+        <div class="msg-ai">مرحباً أستاذي 👋<br>أنا مساعدك في تدريس اللغة العربية. اسألني عن أي شيء — أنشطة، أسئلة شفوية، خطط دروس، التعامل مع الصف...</div>
+      </div>
+      <div class="ai-input-bar">
+        <input class="ai-input" id="aiIn" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}">
+        <button class="btn btn-violet" onclick="sendAI()" style="flex:0;padding:10px 16px;font-size:15px">⬆</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- BOTTOM NAV -->
+  <div id="bottomNav">
+    <button class="nav-item on" onclick="go('s-home',this)">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">الرئيسية</div>
+    </button>
+    <button class="nav-item" onclick="go('s-timer',this)">
+      <div class="nav-icon">⏱️</div>
+      <div class="nav-label">الحصة</div>
+    </button>
+    <button class="nav-item" onclick="go('s-students',this)">
+      <div class="nav-icon">👥</div>
+      <div class="nav-label">الطلاب</div>
+    </button>
+    <button class="nav-item" onclick="go('s-oral',this)">
+      <div class="nav-icon">🎤</div>
+      <div class="nav-label">الشفوي</div>
+    </button>
+    <button class="nav-item" onclick="go('s-rewards',this)">
+      <div class="nav-icon">🏆</div>
+      <div class="nav-label">التميز</div>
+    </button>
+    <button class="nav-item" onclick="go('s-ai',this)">
+      <div class="nav-icon">🤖</div>
+      <div class="nav-label">AI</div>
+    </button>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ═══ BOTTOM SHEETS ═══ -->
+<div class="sheet-overlay" id="rewardSheet" onclick="closeSheet('rewardSheet')">
+  <div class="sheet" onclick.stop>
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">🎁 منح مكافأة</div>
+    <div class="section-label">الطالب / الصف</div>
+    <select class="input" id="rwTarget" style="margin-bottom:12px">
+      <option value="all">🌟 الصف كله</option>
+    </select>
+    <div class="section-label">المكافآت الإيجابية</div>
+    <div class="reward-grid" id="rwGrid"></div>
+    <div class="divider"></div>
+    <div class="section-label">ملاحظات تشجيعية</div>
+    <div class="reward-grid" id="penGrid"></div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="addSheet" onclick="closeSheet('addSheet')">
+  <div class="sheet" onclick.stop>
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">➕ إضافة طالب</div>
+    <div class="section-label">الاسم الرباعي</div>
+    <input class="input" id="newName" placeholder="أحمد محمد علي الشرفي" style="margin-bottom:10px">
+    <div class="section-label">المستوى</div>
+    <div class="chips" id="levelChips">
+      <button class="chip on" onclick="selectLevel(this,'متقدم')">🟢 متقدم</button>
+      <button class="chip" onclick="selectLevel(this,'متوسط')">🟡 متوسط</button>
+      <button class="chip" onclick="selectLevel(this,'يحتاج دعم')">🔴 يحتاج دعم</button>
+    </div>
+    <div class="section-label">وضع الهاتف</div>
+    <div class="chips" id="phoneChips">
+      <button class="chip on" onclick="selectPhone(this,'رقابة أبوية')">🔒 رقابة أبوية</button>
+      <button class="chip" onclick="selectPhone(this,'وصول عادي')">📲 وصول عادي</button>
+      <button class="chip" onclick="selectPhone(this,'وصول واسع')">📡 وصول واسع</button>
+    </div>
+    <button class="btn btn-gold btn-full" style="margin-top:12px" onclick="addStudent()">إضافة</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="bureauSheet" onclick="closeSheet('bureauSheet')">
+  <div class="sheet" onclick.stop>
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">🗂️ الأدوات الإدارية</div>
+
+    <div class="section-label">خطة الدرس السريعة</div>
+    <div class="row" style="margin-bottom:8px">
+      <select class="input" id="bSubj">
+        <option value="النحو والصرف">النحو والصرف</option>
+        <option value="القراءة">القراءة</option>
+        <option value="النصوص">النصوص</option>
+        <option value="التعبير">التعبير</option>
+        <option value="الإملاء">الإملاء</option>
+        <option value="الخط">الخط</option>
+      </select>
+      <input class="input" id="bTopic" placeholder="موضوع الدرس">
+    </div>
+    <button class="btn btn-gold btn-full" style="margin-bottom:8px" onclick="genPlan()">⚡ توليد</button>
+    <div class="output-box" id="planOut">ستظهر هنا...</div>
+
+    <div class="divider"></div>
+    <div class="section-label">كشف الدرجات</div>
+    <button class="btn btn-teal btn-full" onclick="genGrades()">📊 توليد الكشف</button>
+    <div class="output-box" id="gradesOut" style="margin-top:8px;font-size:11px;font-family:monospace">...</div>
+
+    <div class="divider"></div>
+    <div class="section-label">التقرير الإداري السريع</div>
+    <button class="btn btn-violet btn-full" onclick="genReport()">📝 توليد</button>
+    <div class="output-box" id="reportOut" style="margin-top:8px">...</div>
+  </div>
+</div>
+
+<!-- TOAST AREA -->
+<div id="toasts"></div>
+<div id="offlineBar">⚡ وضع عدم الاتصال — البيانات محفوظة محلياً</div>
+
+<script>
+'use strict';
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STATE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+let G = 7;               // current grade
+let students  = [];
+let oralGrades = [];
+let oralScores = {};     // current rubric scores
+let aiHistory  = [];
+let selStudentId = null;
+let newLevel = 'متقدم';
+let newPhone = 'رقابة أبوية';
+let prevSubj = null;
+let prevEffect = null;
+let timerRunning = false;
+let timerDur = 35;
+let timerRemain = 35*60;
+let timerInterval = null;
+let timerPhaseIdx = 0;
+let crossOpen = false;
+
+const COLORS = ['#E8B84B','#2DD4C0','#8B5CF6','#22C55E','#F43F5E','#F59E0B','#0891B2','#BE185D','#059669','#2563EB'];
+
+const GRADES_LABEL = {7:'السابع', 8:'الثامن', 9:'التاسع'};
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SUBJECTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const SUBJECTS = [
+  {key:'nahw',  label:'النحو والصرف', icon:'🔵', cls:'pb-nahw',   pct:{7:72,8:65,9:58}},
+  {key:'qiraa', label:'القراءة',      icon:'🌊', cls:'pb-qiraa',  pct:{7:65,8:70,9:60}},
+  {key:'nusus', label:'النصوص',       icon:'🌿', cls:'pb-nusus',  pct:{7:58,8:62,9:68}},
+  {key:'tabeer',label:'التعبير',      icon:'🔥', cls:'pb-tabeer', pct:{7:70,8:68,9:74}},
+  {key:'imla',  label:'الإملاء',      icon:'✏️',  cls:'pb-imla',  pct:{7:80,8:75,9:72}},
+  {key:'khat',  label:'الخط',         icon:'🖊️', cls:'pb-khat',   pct:{7:55,8:60,9:65}},
+];
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ORAL CRITERIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const ORAL = {
+  7:[
+    {name:'الطلاقة والنطق الصحيح'},
+    {name:'فهم السؤال والإجابة عنه'},
+    {name:'صحة المعلومة'},
+    {name:'الثروة اللغوية'},
+    {name:'الأدب والحضور الذهني'},
+  ],
+  8:[
+    {name:'الطلاقة والتعبير'},
+    {name:'التحليل والفهم'},
+    {name:'دقة المعلومة'},
+    {name:'الأسلوب اللغوي'},
+    {name:'الثقة والتواصل'},
+  ],
+  9:[
+    {name:'الطلاقة والإلقاء'},
+    {name:'التفكير النقدي'},
+    {name:'دقة المعلومة ومرجعيتها'},
+    {name:'الأسلوب وتنوع المفردات'},
+    {name:'التفاعل والإقناع'},
+  ],
+};
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   REWARD TYPES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const REWARDS = [
+  {icon:'⭐',label:'نقطة مميزة',   xp:10},
+  {icon:'🔥',label:'طالب نشيط',   xp:20},
+  {icon:'🏆',label:'أفضل إجابة',  xp:30},
+  {icon:'💡',label:'فكرة إبداعية',xp:20},
+  {icon:'📖',label:'قراءة جميلة', xp:15},
+  {icon:'✍️', label:'خط رائع',    xp:10},
+];
+const PENS = [
+  {icon:'⚠️',label:'تشويش',       xp:-5},
+  {icon:'😴',label:'غياب ذهني',   xp:-3},
+];
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STUDENT NAMES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const NAMES = {
+  7:['أحمد محمد علي','فاطمة عبدالله','يوسف حسن','مريم سالم','عمر الجبري','نور الهدى','زيد الأمين','سارة النعيم','محمود الشرفي','لينا الصلوي','إسلام حميد','رهام الهبوب','تامر الزيدي','غدير الوهيب','بلال المقري','رنا الشامي','ثابت الأهنومي','شيماء الشريف','كريم الأصبحي','ملاك السنباني','حازم المريسي','درة الجزيلي','نبيل الهاشمي','ألاء الشيباني','صالح الشرفي','هند القحطاني'],
+  8:['عبدالله الزبيدي','نجلاء الدولة','مصعب الحداد','رغد المرتضى','قيس الصنعاني','أسماء الهمداني','صهيب النقيب','ولاء الأغبري','ريان التميمي','دانا الدامغ','فارس الشيخ','ميس الجهني','وليد الزمر','شادن القيسي','حسام الردفاني','لجين الصبيحي','أيمن الحجري','سلوى المعمري','ناصر الهلالي','إيمان الكلدي','طارق الأكوع','رشا الشعيبي','منير الحواتي','نداء القحطاني'],
+  9:['خالد البريهي','عائشة الهاملي','مازن الديلمي','أروى الدالي','سامي الشمري','تسنيم المقبلي','محمد الزنداني','إلهام الحوبان','يحيى الجرادي','وفاء النويري','عمار المطر','شيرين الجوادي','توفيق الخولاني','منى الشهري','حيدر الهبوب','ريم الخضري','مؤمن الشقيري','لمياء الجابري','زكريا القفلة','رانيا الحمادي','نضال الأشول','جواهر السواء'],
+};
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HELPERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function $(id){ return document.getElementById(id); }
+function pad(n){ return String(n).padStart(2,'0'); }
+
+/* Toast */
+function toast(msg, type='info', icon='ℹ️'){
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<span>${icon}</span>${msg}`;
+  $('toasts').appendChild(el);
+  setTimeout(()=>{ el.style.animation='toastOut .25s forwards'; setTimeout(()=>el.remove(),260); }, 2600);
+}
+
+/* Confetti */
+function confetti(){
+  const cols=['#E8B84B','#FF6B35','#8B5CF6','#2DD4C0','#22C55E','#F43F5E'];
+  for(let i=0;i<24;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='cpiece';
+      el.style.cssText=`left:${Math.random()*100}vw;top:0;background:${cols[i%6]};transform:rotate(${Math.random()*360}deg);--dur:${.7+Math.random()*.6}s;--delay:${Math.random()*.2}s`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),1200);
+    },i*25);
+  }
+}
+
+/* Navigate */
+function go(screenId, navBtn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('on'));
+  $(screenId).classList.add('on');
+  if(navBtn) navBtn.classList.add('on');
+  else {
+    const idx = {
+      's-home':0,'s-timer':1,'s-students':2,'s-oral':3,'s-rewards':4,'s-ai':5
+    };
+    const navItems = document.querySelectorAll('.nav-item');
+    const i = idx[screenId];
+    if(i!==undefined) navItems[i].classList.add('on');
+  }
+  $('content').scrollTop = 0;
+  if(screenId==='s-rewards') renderLeaderboard();
+  if(screenId==='s-ai') scrollAI();
+}
+
+/* Sheets */
+function closeSheet(id){ $(id).classList.remove('open'); }
+function openRewardSheet(){
+  renderRewardSheet();
+  $('rewardSheet').classList.add('open');
+}
+function openAddSheet(){ $('addSheet').classList.add('open'); }
+function openBureauSheet(){ $('bureauSheet').classList.add('open'); }
+
+/* Stop sheet overlay clicks from propagating */
+document.querySelectorAll('.sheet').forEach(s=>{
+  s.addEventListener('click', e=>e.stopPropagation());
+});
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GRADE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function setGrade(g, btn){
+  G = g;
+  document.querySelectorAll('.gs-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  $('hdrSub').textContent = `الصف ${GRADES_LABEL[g]} · اللغة العربية`;
+  $('welcomeSub').innerHTML = `الصف ${GRADES_LABEL[g]} · <span id="wDateEl"></span>`;
+  initStudents();
+  renderAll();
+  toast(`الصف ${GRADES_LABEL[g]}`, 'info','📚');
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   INIT STUDENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function initStudents(){
+  const names = NAMES[G];
+  students = names.map((n,i)=>({
+    id: i+1,
+    name: n,
+    avatar: n[0],
+    color: COLORS[i%COLORS.length],
+    xp: Math.floor(Math.random()*350+80),
+    level: ['متقدم','متوسط','يحتاج دعم'][Math.floor(Math.random()*3)],
+    phone: ['رقابة أبوية','وصول عادي','وصول واسع'][Math.floor(Math.random()*3)],
+    oralAvg: 0,
+    nahw: Math.floor(Math.random()*30+55),
+    qiraa:Math.floor(Math.random()*30+55),
+    nusus:Math.floor(Math.random()*30+55),
+    tabeer:Math.floor(Math.random()*30+55),
+    imla: Math.floor(Math.random()*30+55),
+    khat: Math.floor(Math.random()*30+55),
+  }));
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CLOCK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function updateClock(){
+  const now = new Date();
+  $('clockEl').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const dateEl = $('wDateEl');
+  if(dateEl) dateEl.textContent = now.toLocaleDateString('ar-SA',{weekday:'long',day:'numeric',month:'long'});
+  const h = now.getHours();
+  $('welcomeText').textContent = h<12?'صباح التميز 🌤️':h<17?'تحيات المساء 🌅':'مساء الإبداع 🌙';
+}
+setInterval(updateClock,1000); updateClock();
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RENDER HOME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function renderHome(){
+  $('statStudents').textContent = students.length;
+  const avg = Math.round(students.reduce((s,st)=>s+st.xp,0)/Math.max(students.length,1));
+  $('statAvgXP').textContent = avg;
+  $('statWeek').textContent = `${Math.ceil(new Date().getDate()/7)}`;
+
+  // Subject strip
+  $('subjStrip').innerHTML = SUBJECTS.map(s=>`
+    <button class="subj-pill" onclick="go('s-timer')">
+      <span>${s.icon}</span>
+      <span style="font-size:12px">${s.label}</span>
+      <span class="badge badge-gold">${s.pct[G]}%</span>
+    </button>
+  `).join('');
+
+  // Progress bars
+  $('progressCard').innerHTML = SUBJECTS.map(s=>`
+    <div class="pbar-wrap">
+      <div class="pbar-head"><span class="pbar-name">${s.icon} ${s.label}</span><span class="pbar-val">${s.pct[G]}%</span></div>
+      <div class="pbar-track"><div class="pbar-fill ${s.cls}" style="width:${s.pct[G]}%"></div></div>
+    </div>
+  `).join('');
+
+  drawCurve();
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CURVE CANVAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function drawCurve(){
+  const cv = $('curveCanvas');
+  if(!cv) return;
+  const W = cv.parentElement.offsetWidth||300, H = 110;
+  cv.width=W; cv.height=H;
+  const ctx = cv.getContext('2d');
+  const data = [180,210,195,240,260,285,310,330].map(v=>v+G*8);
+  const max = Math.max(...data)*1.05;
+  const pts = data.map((v,i)=>({ x:(i/(data.length-1))*W, y:H-(v/max)*(H-16)-8 }));
+
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(232,184,75,0.2)');
+  grad.addColorStop(1,'rgba(232,184,75,0)');
+  ctx.beginPath(); ctx.moveTo(pts[0].x,H);
+  pts.forEach(p=>ctx.lineTo(p.x,p.y));
+  ctx.lineTo(pts[pts.length-1].x,H);
+  ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+
+  const lg=ctx.createLinearGradient(0,0,W,0);
+  lg.addColorStop(0,'#E8B84B'); lg.addColorStop(1,'#2DD4C0');
+  ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length;i++){
+    const mx=(pts[i-1].x+pts[i].x)/2;
+    ctx.bezierCurveTo(mx,pts[i-1].y,mx,pts[i].y,pts[i].x,pts[i].y);
+  }
+  ctx.strokeStyle=lg; ctx.lineWidth=2.5; ctx.stroke();
+  pts.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,3.5,0,Math.PI*2); ctx.fillStyle='#E8B84B'; ctx.fill(); });
+  ctx.fillStyle='#4A5878'; ctx.font='10px IBM Plex Sans Arabic,Tajawal,sans-serif';
+  const wks=['أ1','أ2','أ3','أ4','أ5','أ6','أ7','أ8'];
+  pts.forEach((p,i)=>ctx.fillText(wks[i],p.x-8,H-1));
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TIMER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const PHASES = [
+  {name:'التهيئة',  icon:'🚀', frac:.15},
+  {name:'الشرح',   icon:'📖', frac:.55},
+  {name:'التطبيق', icon:'✅', frac:.30},
+];
+
+function renderPhaseRow(){
+  const el = $('phaseRow'); if(!el) return;
+  el.innerHTML = PHASES.map((p,i)=>`
+    <div class="phase-item ${i===timerPhaseIdx?'active':''}" onclick="setPhase(${i})">
+      <span class="ph-icon">${p.icon}</span>
+      <span class="ph-name">${p.name}</span>
+      <span class="ph-time">${Math.round(timerDur*p.frac)}د</span>
+    </div>
+  `).join('');
+}
+function renderPeriodSubjChips(){
+  const el=$('periodSubjChips'); if(!el) return;
+  el.innerHTML=SUBJECTS.map((s,i)=>`
+    <button class="chip ${i===0?'on':''}" onclick="document.querySelectorAll('#periodSubjChips .chip').forEach(c=>c.classList.remove('on'));this.classList.add('on');$('periodLabel').textContent='${s.label}'">${s.icon} ${s.label}</button>
+  `).join('');
+}
+
+function setDur(d, btn){
+  timerDur=d; timerRemain=d*60;
+  document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPhaseRow(); updateRing();
+}
+function setPhase(i){ timerPhaseIdx=i; $('phaseLabel').textContent=PHASES[i].name; renderPhaseRow(); }
+function nextPhase(){ setPhase((timerPhaseIdx+1)%3); }
+
+function toggleTimer(){
+  if(timerRunning){
+    clearInterval(timerInterval); timerRunning=false;
+    $('timerMainBtn').textContent='▶ استئناف';
+  } else {
+    timerRunning=true;
+    $('timerMainBtn').textContent='⏸ إيقاف';
+    timerInterval=setInterval(()=>{
+      timerRemain--; updateRing();
+      if(timerRemain<=0){
+        clearInterval(timerInterval); timerRunning=false;
+        $('timerMainBtn').textContent='▶ ابدأ';
+        toast('انتهت الحصة!','warn','🔔'); confetti();
+      }
+      if(timerRemain===300) toast('تبقّى 5 دقائق','warn','⚠️');
+    },1000);
+  }
+}
+function resetTimer(){
+  clearInterval(timerInterval); timerRunning=false;
+  timerRemain=timerDur*60; timerPhaseIdx=0;
+  $('timerMainBtn').textContent='▶ ابدأ';
+  updateRing(); renderPhaseRow();
+}
+function updateRing(){
+  const m=Math.floor(timerRemain/60), s=timerRemain%60;
+  $('timerDisp').textContent=`${pad(m)}:${pad(s)}`;
+  const total=timerDur*60, pct=timerRemain/total;
+  const circ=2*Math.PI*86, offset=circ*(1-pct);
+  const ring=$('ringP');
+  ring.style.strokeDashoffset=offset;
+  ring.style.stroke = pct>.5?'var(--teal)':pct>.25?'var(--amber)':'var(--rose)';
+}
+
+/* Cross-subject */
+function toggleCrossPanel(){
+  crossOpen=!crossOpen;
+  const t=$('crossToggle'), p=$('crossPanel');
+  t.classList.toggle('on',crossOpen);
+  p.classList.toggle('open',crossOpen);
+  if(!crossOpen){ prevSubj=null; prevEffect=null; $('crossAdvice').innerHTML=''; }
+}
+function selectPrev(btn, subj){
+  document.querySelectorAll('#crossPanel .chips:nth-of-type(1) .chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on'); prevSubj=subj; updateCrossAdvice();
+}
+function selectEffect(btn, eff){
+  document.querySelectorAll('#crossPanel .chips:nth-of-type(2) .chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on'); prevEffect=eff; updateCrossAdvice();
+}
+function updateCrossAdvice(){
+  if(!prevSubj||!prevEffect) return;
+  const map = {
+    'تعب ذهني': 'ابدأ بنشاط حركي أو جماعي لتكسر الإرهاق الذهني — تجنب الإملاء كأول نشاط.',
+    'تشتت':     'استخدم حيلة التهيئة القصيرة: سؤال ذكي أو لغز لغوي لاسترداد الانتباه.',
+    'نشاط عالٍ':'وجّه الطاقة — منافسة سريعة أو مسابقة جماعية تصرّف الطاقة في خدمة الدرس.',
+    'تحفز جيد': 'الصف جاهز — ابدأ مباشرة بأصعب نقطة في الدرس واستثمر هذا التحفز.',
+  };
+  $('crossAdvice').innerHTML=`
+    <div style="padding:8px 10px;background:rgba(232,184,75,0.08);border:1px solid rgba(232,184,75,0.2);border-radius:8px;font-size:12px;line-height:1.6;color:var(--ink2)">
+      <strong style="color:var(--gold)">💡 بعد ${prevSubj}:</strong> ${map[prevEffect]||'خذ نفساً ولاحظ الصف قبل أن تبدأ.'}
+    </div>`;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STUDENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function renderStudents(filter=''){
+  const list=$('studentList'); if(!list) return;
+  const filtered=students.filter(s=>s.name.includes(filter));
+  list.innerHTML=filtered.map(s=>`
+    <div class="student-item ${selStudentId===s.id?'sel':''}" onclick="selectSt(${s.id})">
+      <div class="s-avatar" style="background:${s.color}">${s.avatar}</div>
+      <div style="flex:1;min-width:0">
+        <div class="s-name">${s.name}</div>
+        <div class="s-meta">
+          <span class="level-dot" style="background:${s.level==='متقدم'?'#22C55E':s.level==='متوسط'?'#F59E0B':'#F43F5E'}"></span>
+          ${s.level} · ${s.phone}
+        </div>
+      </div>
+      <div class="xp-pill">⭐ ${s.xp}</div>
+    </div>
+  `).join('') || '<div style="padding:20px;text-align:center;color:var(--ink3)">لا يوجد طلاب</div>';
+}
+function filterStudents(){ renderStudents($('searchIn').value); }
+
+function selectSt(id){
+  selStudentId=id;
+  const s=students.find(x=>x.id===id);
+  if(!s) return;
+  renderStudents($('searchIn').value);
+
+  const panel=$('studentDetailPanel');
+  panel.style.display='block';
+  panel.innerHTML=`
+    <div class="detail-panel">
+      <button style="float:left;font-size:20px;color:var(--ink3);background:none;border:none;cursor:pointer;line-height:1" onclick="$('studentDetailPanel').style.display='none';selStudentId=null;renderStudents()">✕</button>
+      <div class="detail-avatar-wrap">
+        <div class="detail-avatar" style="background:${s.color}">${s.avatar}</div>
+      </div>
+      <div class="detail-name">${s.name}</div>
+      <div class="detail-badges">
+        <span class="badge ${s.level==='متقدم'?'badge-green':s.level==='متوسط'?'badge-gold':'badge-rose'}">${s.level}</span>
+        <span class="badge badge-teal">${s.phone}</span>
+        <span class="xp-pill">⭐ ${s.xp} XP</span>
+      </div>
+      <div class="row" style="margin-bottom:10px">
+        <div class="stat-box"><div class="val" style="color:var(--teal)">${s.oralAvg||'—'}</div><div class="lbl">الشفوي/20</div></div>
+        <div class="stat-box"><div class="val" style="color:var(--gold)">${s.xp}</div><div class="lbl">XP الفصل</div></div>
+      </div>
+      ${SUBJECTS.map(sub=>`
+        <div class="pbar-wrap">
+          <div class="pbar-head"><span class="pbar-name" style="font-size:11px">${sub.icon} ${sub.label}</span><span class="pbar-val" style="font-size:11px">${s[sub.key]}%</span></div>
+          <div class="pbar-track"><div class="pbar-fill ${sub.cls}" style="width:${s[sub.key]}%"></div></div>
+        </div>`).join('')}
+      <div class="row" style="margin-top:12px">
+        <button class="btn btn-gold" onclick="giveXP(${s.id})">⭐ +20 XP</button>
+        <button class="btn btn-teal" onclick="msgSt(${s.id})">📱 رسالة</button>
+      </div>
+    </div>
+  `;
+  panel.scrollIntoView({behavior:'smooth'});
+}
+function giveXP(id){
+  const s=students.find(x=>x.id===id); if(!s) return;
+  s.xp+=20; toast(`+20 XP لـ ${s.name}`,'xp','⭐');
+  if(s.xp%100<20) confetti();
+  selectSt(id); renderStudents();
+}
+function msgSt(id){
+  const s=students.find(x=>x.id===id); if(!s) return;
+  const msg=`أحسنت ${s.name} 👏\nرصيدك: ${s.xp} ⭐ XP · مستواك: ${s.level}\nاستمر في التميز — معلم اللغة العربية`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function addStudent(){
+  const name=$('newName').value.trim();
+  if(!name){ toast('أدخل الاسم','error','⚠️'); return; }
+  students.push({
+    id:students.length+1, name, avatar:name[0],
+    color:COLORS[students.length%COLORS.length],
+    xp:50, level:newLevel, phone:newPhone, oralAvg:0,
+    nahw:50,qiraa:50,nusus:50,tabeer:50,imla:50,khat:50,
+  });
+  closeSheet('addSheet');
+  $('newName').value='';
+  renderStudents();
+  updateOralStudentSelect();
+  toast(`تمت إضافة ${name}`,'success','✅');
+}
+function selectLevel(btn, val){ newLevel=val; document.querySelectorAll('#levelChips .chip').forEach(c=>c.classList.remove('on')); btn.classList.add('on'); }
+function selectPhone(btn, val){ newPhone=val; document.querySelectorAll('#phoneChips .chip').forEach(c=>c.classList.remove('on')); btn.classList.add('on'); }
+function pickRandom(){
+  const s=students[Math.floor(Math.random()*students.length)];
+  toast(`🎲 ${s.name}`,'xp','🎯'); confetti();
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ORAL EXAM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function renderRubric(){
+  const el=$('rubricWrap'); if(!el) return;
+  $('oralGradeLabel').textContent=`الصف ${GRADES_LABEL[G]}`;
+  const criteria=ORAL[G];
+  el.innerHTML=criteria.map((c,ci)=>`
+    <div class="rubric-item">
+      <div class="rubric-title">${ci+1}. ${c.name}</div>
+      <div class="star-row">
+        ${[1,2,3,4].map(v=>`
+          <button class="star-btn ${(oralScores[ci]||0)>=v?'on':''}" id="sb_${ci}_${v}"
+            onclick="setScore(${ci},${v})">${v}</button>
+        `).join('')}
+        <span class="rubric-score" id="sc_${ci}">${oralScores[ci]||0}</span>
+      </div>
+    </div>
+  `).join('');
+  updateOralTotal();
+}
+function setScore(ci, val){
+  oralScores[ci]=val;
+  [1,2,3,4].forEach(v=>{ const b=$(`sb_${ci}_${v}`); if(b) b.classList.toggle('on',v<=val); });
+  $(`sc_${ci}`).textContent=val;
+  updateOralTotal();
+}
+function updateOralTotal(){
+  const total=Object.values(oralScores).reduce((a,b)=>a+b,0);
+  $('oralTotalDisp').textContent=`${total} / 20`;
+  $('oralProgBar').style.width=(total/20*100)+'%';
+}
+function saveOral(){
+  const sid=$('oralStudentSel').value;
+  if(!sid){ toast('اختر الطالب','error','⚠️'); return; }
+  const s=students.find(x=>x.id==sid);
+  const total=Object.values(oralScores).reduce((a,b)=>a+b,0);
+  s.oralAvg=total; s.xp+=total*4;
+  oralGrades.push({name:s.name,month:$('oralMonthSel').value,total,date:new Date().toLocaleDateString('ar')});
+  toast(`${s.name}: ${total}/20 ✓`,'success','🎤');
+  if(total>=18) confetti();
+  renderOralLog();
+}
+function resetOral(){ oralScores={}; renderRubric(); }
+function renderOralLog(){
+  const el=$('oralLog'); if(!el) return;
+  if(!oralGrades.length){ el.innerHTML='<div style="color:var(--ink3);font-size:12px;padding:8px">لا توجد درجات بعد</div>'; return; }
+  el.innerHTML=[...oralGrades].reverse().map(g=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--raised);border-radius:10px;margin-bottom:5px;font-size:12px;border:1px solid var(--border)">
+      <span style="flex:1;font-weight:700">${g.name}</span>
+      <span style="color:var(--ink2)">شهر ${g.month}</span>
+      <span style="font-weight:800;color:${g.total>=16?'var(--green)':g.total>=12?'var(--gold)':'var(--rose)'}">${g.total}/20</span>
+    </div>
+  `).join('');
+}
+function updateOralStudentSelect(){
+  const sel=$('oralStudentSel'); if(!sel) return;
+  sel.innerHTML='<option value="">اختر الطالب</option>'+students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   REWARDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function renderRewardSheet(){
+  $('rwTarget').innerHTML='<option value="all">🌟 الصف كله</option>'+students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  $('rwGrid').innerHTML=REWARDS.map((r,i)=>`
+    <button class="r-btn" onclick="giveReward(${i})">
+      <span class="r-icon">${r.icon}</span>
+      <span class="r-label">${r.label}</span>
+      <span class="r-xp">+${r.xp}</span>
+    </button>`).join('');
+  $('penGrid').innerHTML=PENS.map((r,i)=>`
+    <button class="r-btn neg" onclick="givePen(${i})">
+      <span class="r-icon">${r.icon}</span>
+      <span class="r-label">${r.label}</span>
+      <span class="r-xp">${r.xp}</span>
+    </button>`).join('');
+}
+function giveReward(i){
+  const r=REWARDS[i], tid=$('rwTarget').value;
+  if(tid==='all'){ students.forEach(s=>s.xp+=r.xp); toast(`${r.icon} +${r.xp} للصف كله`,'xp','🌟'); confetti(); }
+  else { const s=students.find(x=>x.id==tid); if(s){ s.xp+=r.xp; toast(`${r.icon} +${r.xp} لـ ${s.name}`,'xp','⭐'); if(r.xp>=25) confetti(); } }
+}
+function givePen(i){
+  const r=PENS[i], tid=$('rwTarget').value;
+  if(tid!=='all'){ const s=students.find(x=>x.id==tid); if(s){ s.xp=Math.max(0,s.xp+r.xp); toast(`${r.icon} ${r.xp} من ${s.name}`,'warn','⚠️'); } }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   LEADERBOARD & ANNOUNCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function renderLeaderboard(){
+  const sorted=[...students].sort((a,b)=>b.xp-a.xp);
+  const top5=sorted.slice(0,5);
+  const w=Math.ceil(new Date().getDate()/7);
+
+  // Announce card
+  const ac=$('announceCard');
+  if(ac) ac.innerHTML=`
+    <div class="announce-title">🏆 نجوم الأسبوع ${w}</div>
+    <div class="announce-week">الصف ${GRADES_LABEL[G]} · ${new Date().toLocaleDateString('ar-SA',{month:'long',year:'numeric'})}</div>
+    ${top5.map((s,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:16px">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]}</span>
+        <div style="width:28px;height:28px;border-radius:50%;background:${s.color};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#080C14">${s.avatar}</div>
+        <span style="flex:1;font-size:13px;font-weight:700">${s.name}</span>
+        <span class="xp-pill">⭐${s.xp}</span>
+      </div>`).join('')}`;
+
+  // LB list
+  const max=sorted[0]?.xp||1;
+  $('lbList').innerHTML=sorted.map((s,i)=>`
+    <div class="lb-item" onclick="go('s-students');selectSt(${s.id})">
+      <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="lb-ava" style="background:${s.color}">${s.avatar}</div>
+      <div class="lb-info">
+        <div class="lb-name">${s.name}</div>
+        <div class="lb-sub">${s.level} · ${s.phone}</div>
+        <div style="height:3px;background:var(--raised);border-radius:99px;margin-top:4px"><div style="height:100%;width:${(s.xp/max)*100}%;background:linear-gradient(90deg,var(--gold),var(--teal));border-radius:99px"></div></div>
+      </div>
+      <div class="lb-xp">⭐${s.xp}</div>
+    </div>`).join('');
+}
+
+function sendWhatsApp(){
+  const top=[...students].sort((a,b)=>b.xp-a.xp).slice(0,5);
+  const w=Math.ceil(new Date().getDate()/7);
+  const msg=`🌟 *نجوم اللغة العربية — الأسبوع ${w}*\nالصف ${GRADES_LABEL[G]}\n\n`+
+    top.map((s,i)=>`${['🥇','🥈','🥉','4️⃣','5️⃣'][i]} ${s.name} — ${s.xp} ⭐\n`).join('')+
+    `\nتهانينا لهؤلاء المتميزين! 🚀\n— معلم اللغة العربية`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function copyAnnounce(){
+  const top=[...students].sort((a,b)=>b.xp-a.xp).slice(0,5);
+  const w=Math.ceil(new Date().getDate()/7);
+  const text=`🏆 نجوم الأسبوع ${w} — الصف ${GRADES_LABEL[G]}\n`+
+    top.map((s,i)=>`${i+1}. ${s.name} (${s.xp} XP)`).join('\n');
+  navigator.clipboard?.writeText(text).then(()=>toast('تم النسخ','success','📋'));
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BUREAU
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function genPlan(){
+  const subj=$('bSubj').value, topic=$('bTopic').value||'موضوع الدرس';
+  const d=timerDur, t1=Math.round(d*.15), t2=Math.round(d*.55), t3=d-t1-t2;
+  $('planOut').textContent=`خطة الدرس اليومية
+المادة: اللغة العربية — ${subj}
+الموضوع: ${topic}
+الصف: ${GRADES_LABEL[G]}
+المدة: ${d} دقيقة | ${new Date().toLocaleDateString('ar-SA')}
+
+الأهداف:
+• التعرف على ${topic}
+• التطبيق في أمثلة واقعية رقمية
+• التعبير الشفوي والكتابي عن المفهوم
+
+سير الدرس:
+[${t1}د] التهيئة — مراجعة + ربط بحياة الطالب
+[${t2}د] العرض — شرح وأمثلة وحوار
+[${t3}د] التطبيق — نشاط + تقييم ختامي + XP
+
+الواجب: جملتان توظيفيتان`;
+  toast('تم التوليد','success','📄');
+}
+function genGrades(){
+  let t=`كشف الدرجات — الصف ${GRADES_LABEL[G]}\n${'─'.repeat(32)}\n`;
+  students.forEach((s,i)=>{ t+=`${i+1}. ${s.name.padEnd(20,' ')} ${s.oralAvg||'—'}/20\n`; });
+  $('gradesOut').textContent=t;
+}
+function genReport(){
+  const avg=Math.round(students.reduce((s,st)=>s+st.xp,0)/Math.max(students.length,1));
+  $('reportOut').textContent=`التقرير الدوري — اللغة العربية
+الصف ${GRADES_LABEL[G]} | ${new Date().toLocaleDateString('ar-SA')}
+عدد الطلاب: ${students.length}
+متوسط نقاط التميز: ${avg}
+يحتاجون دعماً: ${students.filter(s=>s.level==='يحتاج دعم').length} طلاب
+تغطية المنهج: تقريباً ${SUBJECTS.reduce((s,sb)=>s+sb.pct[G],0)/6|0}%
+المتميز الأول: ${[...students].sort((a,b)=>b.xp-a.xp)[0]?.name||'—'}`;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   AI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function scrollAI(){ const c=$('aiMsgs'); if(c) c.scrollTop=c.scrollHeight; }
+function appendMsg(html, cls){ const el=document.createElement('div'); el.className=cls; el.innerHTML=html; $('aiMsgs').appendChild(el); scrollAI(); return el; }
+
+async function sendAI(){
+  const inp=$('aiIn'); const msg=inp.value.trim(); if(!msg) return;
+  inp.value='';
+  appendMsg(msg,'msg-user');
+  aiHistory.push({role:'user',content:msg});
+  const typingEl=appendMsg('<div class="ai-typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>','msg-ai');
+
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`أنت مساعد معلم اللغة العربية في اليمن. الصف الحالي: ${GRADES_LABEL[G]}. عدد الطلاب: ${students.length}.
+المواد التي تدرّسها فقط: النحو والصرف، القراءة، النصوص الأدبية، التعبير الكتابي، الإملاء، الخط.
+أجب باللغة العربية الفصحى. كن مختصراً وعملياً ومباشراً. اقتراحاتك يجب أن تناسب جيل ألفا اليمني.`,
+        messages:aiHistory
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'عذراً، حدث خطأ في الاتصال.';
+    aiHistory.push({role:'assistant',content:reply});
+    typingEl.innerHTML=reply.replace(/\n/g,'<br>');
+    typingEl.className='msg-ai';
+    scrollAI();
+  } catch(e){
+    typingEl.innerHTML='⚠️ تعذّر الاتصال. تحقق من الإنترنت.';
+    typingEl.className='msg-ai';
+  }
+}
+function qp(msg){ $('aiIn').value=msg; sendAI(); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PWA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault(); deferredPrompt=e;
+  $('installBanner').style.display='flex';
+});
+$('installBtn')?.addEventListener('click',async()=>{
+  if(!deferredPrompt){ toast('افتح المتصفح واضغط "إضافة للشاشة الرئيسية"','info','📲'); return; }
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if(outcome==='accepted') toast('تم التنصيب! 🎉','success','📲');
+  deferredPrompt=null; $('installBanner').remove();
+});
+window.addEventListener('appinstalled', ()=>{ toast('تم تنصيب التطبيق!','success','📲'); $('installBanner').remove(); });
+
+// Register SW
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+// Offline detection
+window.addEventListener('offline', ()=>{ $('offlineBar').style.display='block'; });
+window.addEventListener('online',  ()=>{ $('offlineBar').style.display='none'; });
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   LOCAL STORAGE (persist between reloads)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function saveData(){
+  try{ localStorage.setItem('arabiya_students_'+G, JSON.stringify(students));
+       localStorage.setItem('arabiya_oral_'+G, JSON.stringify(oralGrades)); }catch(e){}
+}
+function loadData(){
+  try{
+    const s=localStorage.getItem('arabiya_students_'+G);
+    if(s){ const parsed=JSON.parse(s); if(parsed.length) students=parsed; }
+    const o=localStorage.getItem('arabiya_oral_'+G);
+    if(o) oralGrades=JSON.parse(o);
+  }catch(e){}
+}
+// Auto-save every 30s
+setInterval(saveData, 30000);
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RENDER ALL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function renderAll(){
+  renderHome();
+  renderStudents();
+  updateOralStudentSelect();
+  renderRubric();
+  renderOralLog();
+  renderLeaderboard();
+  renderPhaseRow();
+  renderPeriodSubjChips();
+  updateRing();
+}
+
+/* ━━━━ BOOT ━━━━ */
+initStudents();
+loadData();
+renderAll();
+// Hide install banner if already installed
+if(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone){
+  const ib=$('installBanner'); if(ib) ib.style.display='none';
+}
+</script>
+</body>
+</html>
